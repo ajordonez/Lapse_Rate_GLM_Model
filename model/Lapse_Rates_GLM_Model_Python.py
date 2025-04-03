@@ -5,11 +5,11 @@
 import math
 import numpy as np
 import pandas as pd
-import sklearn as sk
+import sklearn as sk 
 
-
-file = pd.read_csv("/Users/alexordonez/Documents/Uncleaned_Predictive_Analytics.csv")
-
-df = pd.DataFrame(file)
-
+url = "https://raw.githubusercontent.com/ajordonez/Lapse_Rate_GLM_Model/refs/heads/main/data/Uncleaned_Predictive_Analytics.csv"
+#file = pd.read_csv("/Users/alexordonez/Documents/Uncleaned_Predictive_Analytics.csv")
+df = pd.read_csv(url)
+#df = pd.DataFrame(url)
+print("New Line\n")
 print(df.head())
