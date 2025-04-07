@@ -18,13 +18,9 @@ df = pd.read_csv(url)
 # We need to clean the data of blanks and ND 
 
 df.replace("ND", np.nan, inplace=True)
-df_predictor = df.iloc[:,0:8]
-df_predictor = df_predictor.dropna()
-print(df_predictor)
+df = df.iloc[:,0:8]
+df = df.dropna()
+print(df)
 
-
-# Print head of data
-print("New Line\n")
-# print(df.head())
 
 
