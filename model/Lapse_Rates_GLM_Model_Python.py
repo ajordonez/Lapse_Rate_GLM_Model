@@ -8,6 +8,8 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
+from scipy.stats import chisquare
+
 
 
 # We will take the url in our github for the raw csv files
@@ -50,6 +52,9 @@ print(model.summary())
 # Calculate deviance
 deviance = model.deviance
 print(f"Deviance: {deviance}")
+
+# For chi-square analysis, where f_obs is frequency observed (original data) while f_exp is frequency expected (model)
+chisquare(f_obs=f_obs, f_exp=f_exp)
 
 
 '''
