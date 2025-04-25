@@ -13,11 +13,14 @@ from scipy.stats import chisquare
 
 
 # We will take the url in our github for the raw csv files
-url = "https://raw.githubusercontent.com/ajordonez/Lapse_Rate_GLM_Model/refs/heads/main/data/Uncleaned_Predictive_Analytics.csv"
+url_1 = "https://raw.githubusercontent.com/ajordonez/Lapse_Rate_GLM_Model/refs/heads/main/data/Uncleaned_Predictive_Analytics.csv"
 
+url_2 = "https://raw.githubusercontent.com/ajordonez/Lapse_Rate_GLM_Model/refs/heads/main/data/Historical_GDP.csv"
 # We will use pandas to turn this data into a dataframe
-df = pd.read_csv(url)
+df = pd.read_csv(url_1)
 
+# We have to make the historical gdp data into a df too
+df_gdp_only = pd.read_csv(url_2)
 
 
 # We need to clean the data of blanks and ND 
@@ -25,7 +28,10 @@ df = pd.read_csv(url)
 df.replace("ND", np.nan, inplace=True)
 df = df.iloc[:,0:8]
 df = df.dropna()
-print(df)
+
+merged_df = df.merge(df_gdp_only, on='Year', how='left')
+
+print(merged_df)
 
 
 '''
