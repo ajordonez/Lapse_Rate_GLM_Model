@@ -23,15 +23,20 @@ df = pd.read_csv(url_1)
 df_gdp_only = pd.read_csv(url_2)
 
 
-# We need to clean the data of blanks and ND 
+# To make the join easier we are stripping the column names to make sure there are no whitespace
 
+
+
+
+# We need to clean the data of blanks and ND 
+df = df.merge(df_gdp_only, on='Year', how='left')
 df.replace("ND", np.nan, inplace=True)
 df = df.iloc[:,0:8]
 df = df.dropna()
 
-merged_df = df.merge(df_gdp_only, on='Year', how='left')
 
-print(merged_df)
+
+print(df)
 
 
 '''
