@@ -2,70 +2,67 @@
 
 # Collaborators: Tanna Henry, Alejandro Ordonez, Simon Zheng
 
-import math
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import statsmodels.api as sm
-from scipy.stats import chisquare
-
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
 
 # We will take the url in our github for the raw csv files
 url_1 = "https://raw.githubusercontent.com/ajordonez/Lapse_Rate_GLM_Model/refs/heads/main/data/Uncleaned_Predictive_Analytics.csv"
 
 url_2 = "https://raw.githubusercontent.com/ajordonez/Lapse_Rate_GLM_Model/refs/heads/main/data/Historical_GDP.csv"
-# We will use pandas to turn this data into a dataframe
+
+# We will use pandas to turn both our data into a dataframe
 df = pd.read_csv(url_1)
 
-# We have to make the historical gdp data into a df too
 df_gdp_only = pd.read_csv(url_2)
 
 
-# To make the join easier we are stripping the column names to make sure there are no whitespace
-
-
+# We have to join the two together so that we can use the historical GDP in the GLM
+df = df.merge(df_gdp_only, on='Year', how='left')
 
 
 # We need to clean the data of blanks and ND 
-df = df.merge(df_gdp_only, on='Year', how='left')
 df.replace("ND", np.nan, inplace=True)
-df = df.iloc[:,0:8]
 df = df.dropna()
 
 
+# Setting our predictor and outcome variables for the GLM
 
-print(df)
+X = df[['3 month CD Rates','10-Year Treasury']]
+y = df['GDPC1']
 
-
-'''
-# The following will show how we intend to use the data provided to make a GLM using either Poisson or Negative Binomial distribution
-
-# Preparing the data
-
-X = df[['predictor1', 'predictor2']]
-y = df['binary_outcome']
-# Adding a constant to the predictor variable set
+# Add the intercept
 X = sm.add_constant(X)
-# Logistic Regression model
-model = sm.GLM(y, X, family=sm.families.NegativeBinomial()).fit()
-# or 
-# Poisson Regression model
-model = sm.GLM(y, X, family=sm.families.Poisson()).fit()
+
+X = X.apply(pd.to_numeric, errors='coerce')
+y = pd.to_numeric(y, errors='coerce')
+
+
+
+# Linear regression
+model = sm.GLM(y, X, family=sm.families.Gaussian())
+
+results = model.fit()
+
 
 # Model summary
-print(model.summary())
+print(results.summary())
 
-
-# For testing if the model works try the below methods for a poisson model
 
 # Calculate deviance
-deviance = model.deviance
-print(f"Deviance: {deviance}")
+print(f"Null Deviance: {results.null_deviance}")
+print(f"Model Deviance: {results.deviance}")
 
-# For chi-square analysis, where f_obs is frequency observed (original data) while f_exp is frequency expected (model)
-chisquare(f_obs=f_obs, f_exp=f_exp)
+# Calculate VIF for the predictors
+vif_data = pd.DataFrame()
+vif_data['feature'] = X.columns
+vif_data['VIF'] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
+
+print(vif_data)
 
 
-'''
+
